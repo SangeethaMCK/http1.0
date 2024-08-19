@@ -1,34 +1,40 @@
 function reqParser(req) {
     const reqArr = req.split("\r\n");
 
-    //parse request line
+    // Parse request line
     const reqLine = reqArr[0];
-
     const reqLineArr = reqLine.split(" ");
-    //method path version
     const method = reqLineArr[0];
     const path = reqLineArr[1];
     const version = reqLineArr[2];
-    console.log("method",method,"path",path,"version",version);
- 
-    //find empty line
+    console.log("Method:", method, "Path:", path, "Version:", version);
+
+    // Find empty line
     const emptyLineIndex = reqArr.indexOf("");
 
-    //parse headers
-    const headers = reqArr.slice(1).slice(0,emptyLineIndex-1);
-
-    headers.forEach(header => {
-        const headerArr = header.split(":",2);
-        const key = headerArr[0];
-        const value = header.slice(headerArr[0].length+1);
-        console.log("key",key,"value",value);
+    // Parse headers
+    const headersArr = reqArr.slice(1, emptyLineIndex);
+    const headers = {};
+    headersArr.forEach(header => {
+        const [key, ...values] = header.split(":");
+        headers[key.trim()] = values.join(":").trim();
+        console.log(`${key}: ${values.join(":").trim()}`);
     });
 
-    //parse body
-    const body = reqArr.slice(emptyLineIndex+1);
-    console.log("body", JSON.parse(body));
-}
+    // Parse body
+    const body = reqArr.slice(emptyLineIndex + 1).join("\r\n");
+    let parsedBody = null;
+    if (body) {
+        try {
+            parsedBody = JSON.parse(body);
+        } catch (err) {
+            console.log("Body parsing failed:", err);
+        }
+    }
+    console.log("Body:", parsedBody);
 
+    return { method, path, version, headers, body: parsedBody };
+}
 
 const req = "POST /api/data HTTP/1.1\r\n"+
 "Host: example.com\r\n"+
@@ -39,10 +45,9 @@ const req = "POST /api/data HTTP/1.1\r\n"+
 "Content-Length: 45\r\n"+
 "Connection: close\r\n"+
 "\r\n"+
-"{\"name\": \"Sangeetha\", \"age\": 25, \"email\": \"sangeetha@example.com\"}"
+"{\"name\": \"Sangeetha\", \"age\": 25, \"email\": \"sangeetha@example.com\"}\r\n";
 
-    
-
-
-
+// Test the reqParser function
 reqParser(req);
+
+module.exports = reqParser;

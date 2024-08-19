@@ -1,32 +1,43 @@
-function resParser(res) {
+ function resParser(res) {
     const resArr = res.split("\r\n");
 
-    //parse response line
-    const resLine = resArr[0];
-    const resLineArr = resLine.split(" ");
+    // Parse the status line
+    const statusLine = resArr[0];
+    const resLineArr = statusLine.split(" ");
     
-    //version status
+    // Version and status
     const version = resLineArr[0];
     const status = resLineArr[1];
-    const phrase = resLineArr[2];
-    console.log("version",version,"status",status,"phrase",phrase);
+    const phrase = resLineArr.slice(2).join(" ");  // Join the rest as the status phrase
+    console.log("version", version, "status", status, "phrase", phrase);
 
     const emptyLineIndex = resArr.indexOf("");
 
-    //parse headers
-    const headers = resArr.slice(1).slice(0,emptyLineIndex-1);
-    headers.forEach(header => {
-        const headerArr = header.split(":",2);
-        const key = headerArr[0];
-        const value = header.slice(headerArr[0].length+1);
-        console.log(`${key}: ${value}`);
+    // Parse headers
+    const headersArr = resArr.slice(1, emptyLineIndex);
+    const headers = {};
+    headersArr.forEach(header => {
+        const [key, ...values] = header.split(":");
+        headers[key.trim()] = values.join(":").trim();
+        console.log(`${key}: ${values.join(":").trim()}`);
     });
 
-    //parse body
-    const body = resArr.slice(emptyLineIndex+1);
-    console.log("body", JSON.parse(body));
+    // Parse body
+    const body = resArr.slice(emptyLineIndex + 1).join("\r\n");
+    let parsedBody = null;
+    if (body) {
+        try {
+            parsedBody = JSON.parse(body);
+            console.log("body", parsedBody);
+        } catch (err) {
+            console.log("Body parsing failed:", err);
+        }
+    }
+
+    return { version, status, phrase, headers, body: parsedBody };
 }
 
+// Test example
 const res = "HTTP/1.1 200 OK\r\n" +
     "Date: Fri, 01 Jan 2019 00:00:00 GMT\r\n" +
     "Server: Apache/2.4.29 (Ubuntu)\r\n" +
@@ -37,8 +48,9 @@ const res = "HTTP/1.1 200 OK\r\n" +
     "Vary: Accept-Encoding\r\n" +
     "Content-Type: text/html; charset=UTF-8\r\n" +
     "Connection: close\r\n" +
-    "\r\n"+
-    "{\"name\": \"Sangeetha\", \"age\": 25, \"email\": \"sangeetha@example.com\"}";
+    "\r\n" +
+    "{\"name\": \"Sangeetha\", \"age\": 25, \"email\": \"sangeetha@example.com\"}\r\n";
 
-    resParser(res);
+resParser(res);
 
+module.exports = resParser;
