@@ -1,14 +1,19 @@
 const net = require('net');
 
-const server = net.createServer((c) => {
-    
-    c.on('data', (data) => {
-        console.log('Received data:', data.toString());
-        c.write('Echo server received your message');
+const server = net.createServer((connection) => {
+    console.log('Client connected');
+
+    connection.on('data', (data) => {
+        console.log('Received:', data.toString());
+        connection.write(data); // Echo the received data back to the client
     });
 
-    c.on('end', () => {
-        console.log('Connection closed');
+    connection.on('end', () => {
+        console.log('Client disconnected');
+    });
+
+    connection.on('error', (err) => {
+        console.error('Error:', err);
     });
 });
 
