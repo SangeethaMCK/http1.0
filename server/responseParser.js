@@ -37,7 +37,7 @@
     return { version, status, phrase, headers, body: parsedBody };
 }
 
-// Test example
+// Test exampl
 const res = "HTTP/1.1 200 OK\r\n" +
     "Date: Fri, 01 Jan 2019 00:00:00 GMT\r\n" +
     "Server: Apache/2.4.29 (Ubuntu)\r\n" +
