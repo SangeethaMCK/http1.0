@@ -1,12 +1,15 @@
 const net = require('net');
 
+
+//when a new client connects, callback func gets exec
 const server = net.createServer((connection) => {
     console.log('Client connected');
 
     connection.on('data', (data) => {
         console.log('Received:', data.toString());
-        connection.write(data); // Echo the received data back to the client
+        connection.write(data.toString()); // Echo the received data back to the client
     });
+    
 
     connection.on('end', () => {
         console.log('Client disconnected');
