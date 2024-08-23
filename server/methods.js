@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("./bodyParser");
-const { create } = require("domain");
 
 const methods = {
   GET: "GET",
@@ -13,7 +12,7 @@ const methods = {
 
 // Helper function to send a response
 const sendResponse = (res, statusCode, contentType, body) => {
-  res.writeHead(statusCode, { "Content-Type": contentType });
+  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': body.length });
   res.end(body);
 };
 
@@ -46,11 +45,11 @@ const methodHandler = (req, res) => {
       if (parsedBody) {
         sendResponse(
           res,
-          200,
+          201,
           headers["content-type"] || "application/json",
           JSON.stringify({
             message: "Created successfully",
-            data: parsedBody,
+            // data: parsedBody,
           })
         );
       } else {

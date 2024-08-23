@@ -1,5 +1,6 @@
 const bodyParser = (body, headers) => {
     
+    
     const contentType = headers['Content-Type'];
     console.log('Content-Type:', contentType);
     if (contentType === 'application/json') {
@@ -12,7 +13,7 @@ const bodyParser = (body, headers) => {
     }
     else if(contentType === 'text/html') {
         // console.log('Body-html:', body.toString());
-        return body.toString();
+        return body
     }
     // return body.toString();
 };
