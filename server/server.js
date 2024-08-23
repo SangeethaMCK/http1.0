@@ -9,7 +9,7 @@ const server = net.createServer((connection) => {
         const req = reqParser(data.toString());
         console.log('Parsed Request:', req);
 
-        
+
         const res = {
             writeHead: (statusCode, headers) => {
                 connection.write(`HTTP/1.0 ${statusCode} ${statusMessage(statusCode)}\r\n`);
@@ -19,6 +19,7 @@ const server = net.createServer((connection) => {
                 connection.write("\r\n");
             },
             end: (body) => {
+                // console.log('Sending response:', body.toString());
                 connection.write(body);
                 connection.end(); 
             }

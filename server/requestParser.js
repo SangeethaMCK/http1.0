@@ -21,16 +21,8 @@ function reqParser(req) {
 
     // Parse body
     const body = reqArr.slice(emptyLineIndex + 1).join("\r\n");
-    let parsedBody = null;
-    if (body) {
-        try {
-            parsedBody = JSON.parse(body);
-        } catch (err) {
-            console.error("Body parsing failed:", err);
-        }
-    }
 
-    return { method, path, version, headers, body: parsedBody };
+    return { method, path, version, headers, body };
 }
 
 module.exports = reqParser;
