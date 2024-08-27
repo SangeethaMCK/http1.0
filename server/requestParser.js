@@ -1,28 +1,18 @@
 function reqParser(req) {
-    const reqArr = req.split("\r\n");
+    const [reqHeaders, reqBody] = req.split("\r\n\r\n");
 
-    // Parse request line
-    const reqLine = reqArr[0];
-    const reqLineArr = reqLine.split(" ");
-    const method = reqLineArr[0];
-    const path = reqLineArr[1];
-    const version = reqLineArr[2];
-
-    // Find the empty line (separates headers from the body)
-    const emptyLineIndex = reqArr.indexOf("");
+    const [reqline, ...reqHeader] = reqHeaders.split("\r\n");
+    
+    const [method, path, version] = reqline.split(" ");
 
     // Parse headers
-    const headersArr = reqArr.slice(1, emptyLineIndex);
     const headers = {};
-    headersArr.forEach(header => {
-        const [key, ...values] = header.split(":");
-        headers[key.trim()] = values.join(":").trim();
+    reqHeader.forEach(header => {
+        const [key, ...values] = header.split(":",2);
+        headers[key.trim()] = values[0].trim();
     });
 
-    // Parse body
-    const body = reqArr.slice(emptyLineIndex + 1).join("\r\n");
-
-    return { method, path, version, headers, body };
+    return { method, path, version, headers, body: reqBody };
 }
 
 module.exports = reqParser;

@@ -23,7 +23,6 @@ const server = net.createServer((connection) => {
                 connection.end(); 
             }
         };
-
         methodHandler(req, res);
     });
 

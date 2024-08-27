@@ -13,7 +13,7 @@ const bodyParser = (body, headers) => {
     }
     else if(contentType === 'text/html') {
         // console.log('Body-html:', body.toString());
-        return body
+        return body.toString();
     }
     // return body.toString();
 };

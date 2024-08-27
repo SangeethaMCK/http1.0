@@ -12,7 +12,7 @@ const methods = {
 
 // Helper function to send a response
 const sendResponse = (res, statusCode, contentType, body) => {
-  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': body.length });
+  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': Buffer.from(body).length});
   res.end(body);
 };
 
@@ -34,8 +34,8 @@ const methodHandler = (req, res) => {
             JSON.stringify({ error: "File not found" })
           );
         } else {
-          sendResponse(res, 200, headers["content-type"] || "text/html", data);
-        }
+          sendResponse(res, 200, headers["content-type"] || "text/html",  data);
+        } 
       });
       break;
 
@@ -49,7 +49,7 @@ const methodHandler = (req, res) => {
           headers["content-type"] || "application/json",
           JSON.stringify({
             message: "Created successfully",
-            // data: parsedBody,
+            data: parsedBody,
           })
         );
       } else {
