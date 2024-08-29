@@ -1,8 +1,10 @@
 const { server } = require('./server'); 
-const { bodyParser } = require('./bodyParser');
+// const { bodyParser } = require('./bodyParser');
+const { cors } = require('./cors');
 
 const app = server();
-app.use(bodyParser);
+// app.use(bodyParser);
+app.use(cors);
 
 const getUsers = (req, res) => {    
     res.writeHead(200, { 'Content-Type': 'application/json' });

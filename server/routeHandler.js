@@ -7,7 +7,6 @@ const routes = {
 };
 
 function route(method, path, handler) {
-    console.log('route', method, path, handler);
     if (!routes[method]) {
         routes[method] = {};
     }
@@ -16,7 +15,6 @@ function route(method, path, handler) {
     const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
     // Store the handler in the routes object
     routes[method][normalizedPath] = handler;
-    console.log('routes:', routes);
 }
 
 module.exports = { route, routes };

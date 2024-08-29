@@ -11,12 +11,15 @@ const methods = {
 
 // Helper function to send a response
 const sendResponse = (res, statusCode, contentType, body) => {
-  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': Buffer.from(body).length });
-  res.end(body);
+  res.setStatusCode(statusCode);
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Content-Length', Buffer.byteLength(body));
+  res.setBody(body);
+  res.send();
 };
 
 const methodHandler = (req, res) => {
-  console.log('methodHandler', req);
+  console.log('methodHandler');
   const { method, path: reqPath, headers, body } = req;
 
   switch (method) {

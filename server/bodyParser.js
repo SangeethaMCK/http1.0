@@ -1,4 +1,5 @@
 const bodyParser = (req, res, next) => {
+    console.log('Body Parser');
     const contentType = req.headers['Content-Type'] || req.headers['content-type'];
 
     if (contentType === 'application/json' && req.body) {
@@ -6,8 +7,10 @@ const bodyParser = (req, res, next) => {
             req.body = JSON.parse(req.body);
         } catch (e) {
             console.error('Error parsing JSON:', e);
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ error: 'Invalid JSON' }));
+            res.statusCode = 400;
+            res.headers.push({ 'Content-Type': 'application/json' });
+            res.body = JSON.stringify({ error: 'Invalid JSON' });
+            return;
         }
     } else if (contentType === 'text/plain' || contentType === 'text/html') {
         req.body = req.body.toString();

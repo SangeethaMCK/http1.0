@@ -1,5 +1,5 @@
 const net = require('net');
-const statusMessage = require('./statusCode');
+const statusMessages = require('./statusCode');
 const { reqParser } = require('./requestParser');
 const { applyMiddlewares } = require('./middlewareHandler');
 const { route, routes } = require('./routeHandler');
@@ -11,26 +11,45 @@ function handleConnection(connection) {
     console.log('Client connected');
 
     connection.on('data', async (data) => {
-        const req = reqParser(data.toString(), routes); // Parse the request
-        console.log('Parsed Request:', req);
+        const req = reqParser(data.toString(), routes); 
 
-        // Prepare response object
+        
         const res = {
-            writeHead: (statusCode, headers) => {
-                connection.write(`HTTP/1.0 ${statusCode} ${statusMessage(statusCode)}\r\n`);
-                for (const [key, value] of Object.entries(headers)) {
-                    connection.write(`${key}: ${value}\r\n`);
+            statusCode: '',  
+            headers: {},      
+            body: '',         
+            
+
+            setStatusCode(code) {
+                this.statusCode = code;
+            },
+            
+            setHeader(name, value) {
+                this.headers[name] = value;
+            },
+
+            setBody(content) {
+                this.body = content;
+            },
+
+            send() {
+               let response = (`HTTP/1.0 ${this.statusCode} ${statusMessages(this.statusCode)}\r\n`);
+
+                for (const [key, value] of Object.entries(this.headers)) {
+                   response += `${key}: ${value}\r\n`;
                 }
-                connection.write("\r\n");
-            },
-            end: (body) => {
-                connection.write(body);
+                response += `\r\n`;
+
+                
+                if (this.body) {
+                    response += this.body;
+                }
+                connection.write(response);
                 connection.end();
-            },
-            headersSent: false // Add this to check if headers are sent
+            }
         };
 
-        // Apply middlewares and route the request
+
         await applyMiddlewares(req, res, () => {
 
             if (route[req.method] && route[req.method][req.path]) {

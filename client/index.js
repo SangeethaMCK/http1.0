@@ -3,11 +3,10 @@ const net = require('net');
 //callback is exec, if connection is success
 const client = net.createConnection({ port: 8080 }, () => {
     console.log('Connected to server');
-    client.write("GET / HTTP/1.0\r\n"+
+    client.write("GET /users/123 HTTP/1.0\r\n"+
         "Host: localhost:8080\r\n"+
         "Content-Type: application/json\r\n"+
-        "Connection: close\r\n\r\n"+
-        '{"name": "sangeetha", "age": 30}'
+        "Connection: close\r\n\r\n"
     );
 
 });
