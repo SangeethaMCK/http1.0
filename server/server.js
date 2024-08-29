@@ -1,15 +1,20 @@
 const net = require('net');
-const reqParser = require('./requestParser');
+const statusMessage = require('./statusCode');
+const { reqParser } = require('./requestParser');
+const { applyMiddlewares } = require('./middlewareHandler');
+const { route, routes } = require('./routeHandler');
+const { use } = require('./middlewareHandler');
 const { methodHandler } = require('./methods');
-const statusMessage = require('./statusCode'); 
 
-const server = net.createServer((connection) => {
+// Function to handle incoming connections
+function handleConnection(connection) {
     console.log('Client connected');
 
-    connection.on('data', (data) => {
-        const req = reqParser(data.toString());
+    connection.on('data', async (data) => {
+        const req = reqParser(data.toString(), routes); // Parse the request
         console.log('Parsed Request:', req);
 
+        // Prepare response object
         const res = {
             writeHead: (statusCode, headers) => {
                 connection.write(`HTTP/1.0 ${statusCode} ${statusMessage(statusCode)}\r\n`);
@@ -20,10 +25,20 @@ const server = net.createServer((connection) => {
             },
             end: (body) => {
                 connection.write(body);
-                connection.end(); 
-            }
+                connection.end();
+            },
+            headersSent: false // Add this to check if headers are sent
         };
-        methodHandler(req, res);
+
+        // Apply middlewares and route the request
+        await applyMiddlewares(req, res, () => {
+
+            if (route[req.method] && route[req.method][req.path]) {
+                route[req.method][req.path](req, res);
+            } else {
+                methodHandler(req, res);
+            }
+        });
     });
 
     connection.on('end', () => {
@@ -33,9 +48,17 @@ const server = net.createServer((connection) => {
     connection.on('error', (err) => {
         console.error('Error:', err);
     });
-});
+}
 
-server.listen(8080, () => {
-    console.log('Server listening on port 8080');
-});
+// Create the server
+const server = () => {
+    const serverInstance = net.createServer(handleConnection);
+    serverInstance.use = use;
+    serverInstance.route = route;
+    return serverInstance;
+};
 
+// Export the server creation function
+module.exports = {
+    server
+};

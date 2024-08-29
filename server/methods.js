@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const bodyParser = require("./bodyParser");
 
 const methods = {
   GET: "GET",
@@ -12,11 +11,12 @@ const methods = {
 
 // Helper function to send a response
 const sendResponse = (res, statusCode, contentType, body) => {
-  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': Buffer.from(body).length});
+  res.writeHead(statusCode, { "Content-Type": contentType, 'Content-Length': Buffer.from(body).length });
   res.end(body);
 };
 
 const methodHandler = (req, res) => {
+  console.log('methodHandler', req);
   const { method, path: reqPath, headers, body } = req;
 
   switch (method) {
@@ -25,8 +25,10 @@ const methodHandler = (req, res) => {
         __dirname,
         reqPath === "/" ? "index.html" : reqPath
       );
+
       fs.readFile(filePath, (err, data) => {
         if (err) {
+          console.error(`Error reading file: ${filePath}`, err);
           sendResponse(
             res,
             404,
@@ -34,15 +36,28 @@ const methodHandler = (req, res) => {
             JSON.stringify({ error: "File not found" })
           );
         } else {
-          sendResponse(res, 200, headers["content-type"] || "text/html",  data);
-        } 
+          // Determine Content-Type based on file extension
+          const ext = path.extname(filePath).slice(1);
+          const contentTypeMap = {
+            html: "text/html",
+            js: "application/javascript",
+            css: "text/css",
+            json: "application/json",
+            txt: "text/plain",
+          };
+
+          const contentType = contentTypeMap[ext] || "application/octet-stream";
+          sendResponse(res, 200, contentType, data);
+        }
       });
       break;
 
     case methods.POST:
-      const parsedBody = bodyParser(body, headers);
-      console.log("parsedBody", parsedBody);
-      if (parsedBody) {
+      try {
+        // If body is JSON, parse it
+        const parsedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        console.log("Parsed Body:", parsedBody);
+
         sendResponse(
           res,
           201,
@@ -52,7 +67,8 @@ const methodHandler = (req, res) => {
             data: parsedBody,
           })
         );
-      } else {
+      } catch (error) {
+        console.error("Error parsing body:", error);
         sendResponse(
           res,
           400,
@@ -64,13 +80,18 @@ const methodHandler = (req, res) => {
 
     case methods.PUT:
       try {
+        // If body is JSON, parse it
+        const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        console.log("Updated Body:", updatedBody);
+
         sendResponse(
           res,
           200,
           headers["content-type"] || "application/json",
-          JSON.stringify({ message: "Updated successfully" })
+          JSON.stringify({ message: "Updated successfully", data: updatedBody })
         );
       } catch (error) {
+        console.error("Error parsing body:", error);
         sendResponse(
           res,
           400,
