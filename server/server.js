@@ -11,15 +11,22 @@ function handleConnection(connection) {
     console.log('Client connected');
 
     connection.on('data', async (data) => {
-        const req = reqParser(data.toString(), routes); 
+        let req ={
+            method:'',
+            version:'',
+            path:'',
+            headers:{},
+            body:'',
+            query:{},
+            params:{}
 
-        
+        }
+         
         const res = {
             statusCode: '',  
             headers: {},      
             body: '',         
             
-
             setStatusCode(code) {
                 this.statusCode = code;
             },
@@ -46,9 +53,11 @@ function handleConnection(connection) {
                 }
                 connection.write(response);
                 connection.end();
+                return;
             }
         };
 
+        req = reqParser(req, res, data.toString(), routes); 
 
         await applyMiddlewares(req, res, () => {
 

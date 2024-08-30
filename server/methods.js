@@ -13,13 +13,13 @@ const methods = {
 const sendResponse = (res, statusCode, contentType, body) => {
   res.setStatusCode(statusCode);
   res.setHeader('Content-Type', contentType);
-  res.setHeader('Content-Length', Buffer.byteLength(body));
+  res.setHeader('Content-Length', Buffer.from(body).length);
   res.setBody(body);
   res.send();
 };
 
 const methodHandler = (req, res) => {
-  console.log('methodHandler');
+  console.log('methodHandler', req);
   const { method, path: reqPath, headers, body } = req;
 
   switch (method) {

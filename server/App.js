@@ -1,14 +1,16 @@
 const { server } = require('./server'); 
-// const { bodyParser } = require('./bodyParser');
+const { bodyParser } = require('./bodyParser');
 const { cors } = require('./cors');
 
 const app = server();
-// app.use(bodyParser);
+app.use(bodyParser);
 app.use(cors);
 
 const getUsers = (req, res) => {    
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `User ID is ${req.params.userId}`, query: req.query }));
+    res.setStatusCode(200);
+    res.setHeader('Content-Type', 'application/json');
+    res.setBody(JSON.stringify({ message: `User ID is ${req.params.userId}`, query: req.query }));
+    res.send();
 };
 
 app.route('GET', '/users/:userId', getUsers);

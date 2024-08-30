@@ -1,4 +1,4 @@
-const pathParser = (method, path, routes) => {
+const pathParser = (req, res, method, path, routes) => {
     console.log('pathParser');
 
     const [pathWithoutQuery, queryString] = path.split('?');
@@ -7,10 +7,10 @@ const pathParser = (method, path, routes) => {
 
     const matchedRoute = findMatchingRoute(method, pathArr, routes);
 
-    const req = {
-        params: {},
-        query: {},
-    };
+    // const req = {
+    //     params: {},
+    //     query: {},
+    // };
 
     // Extract route parameters
     if (matchedRoute) {
@@ -21,6 +21,8 @@ const pathParser = (method, path, routes) => {
                 req.params[paramName] = pathArr[i];
             }
         }
+        console.log("match",routes[method][matchedRoute]);
+        routes[method][matchedRoute](req, res);
     }
 
     // Extract query parameters
