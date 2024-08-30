@@ -1,9 +1,9 @@
 const { pathParser } = require('./pathParser');
 
 // need to add routes
-function reqParser(req, res, reqString, routes) {
-    console.log("reqParser");
-    const [reqHeaders, reqBody] = reqString.split("\r\n\r\n");
+function reqParser(req, res, reqData, routes) {
+    console.log("reqParser", reqData);
+    const [reqHeaders, reqBody] = reqData.split("\r\n\r\n");
 
     const [reqline, ...reqHeader] = reqHeaders.split("\r\n");
 

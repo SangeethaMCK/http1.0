@@ -6,10 +6,11 @@ const { route, routes } = require('./routeHandler');
 const { use } = require('./middlewareHandler');
 const { methodHandler } = require('./methods');
 
+
 // Function to handle incoming connections
 function handleConnection(connection) {
     console.log('Client connected');
-
+    console.log("routes", routes);
     connection.on('data', async (data) => {
         let req ={
             method:'',
@@ -56,8 +57,8 @@ function handleConnection(connection) {
                 return;
             }
         };
-
-        req = reqParser(req, res, data.toString(), routes); 
+        console.log("data",data);
+        req = reqParser(req, res, data, routes); 
 
         await applyMiddlewares(req, res, () => {
 
