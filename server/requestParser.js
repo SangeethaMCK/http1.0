@@ -1,31 +1,36 @@
-const { pathParser } = require('./pathParser');
+const { pathParser } = require("./pathParser");
 
 // need to add routes
-function reqParser(req, res, reqData, routes) {
-    console.log("reqParser", reqData);
-    const [reqHeaders, reqBody] = reqData.split("\r\n\r\n");
+function reqParser(req, res, data, routes) {
+  console.log("reqParser", data);
 
-    const [reqline, ...reqHeader] = reqHeaders.split("\r\n");
+  const delimiters = Buffer.from("\r\n\r\n");
 
-    const [method, path, version] = reqline.split(" ");
+  console.log("delimiters", delimiters);    
 
-    // Parse the path and extract params and query using pathParser
-     req = pathParser(req, res, method, path, routes);
+  const [reqHeaders, reqBody] = [
+    data.slice(0, data.indexOf(delimiters)),
+    data.slice(data.indexOf(delimiters) + delimiters.length),
+  ];
 
-    // Parse headers
-    const headers = {};
-    reqHeader.forEach(header => {
-        const [key, ...values] = header.split(":");
-        headers[key.trim()] = values.join(':').trim();
-    });
+  const [reqline, ...reqHeader] = reqHeaders.toString().split("\r\n");
 
-    req.method = method;
-    req.version = version;
-    req.headers = headers;
-    req.body = reqBody;
-    req.path = path;
+  const [method, path, version] = reqline.split(" ");
 
-    return req;
+  // Parse headers
+  const headers = {};
+  reqHeader.forEach((header) => {
+    const [key, ...values] = header.split(":");
+    headers[key.trim()] = values.join(":").trim();
+  });
+  req.setMethod(method);
+  req.setPath(path);
+  req.setHeaders(headers);
+  req.setbody(reqBody);
+
+  req = pathParser(req, res, routes);
+
+  return req;
 }
 
 module.exports = { reqParser };

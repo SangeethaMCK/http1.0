@@ -1,16 +1,11 @@
-const pathParser = (req, res, method, path, routes) => {
+const pathParser = (req, res,routes) => {
     console.log('pathParser');
 
-    const [pathWithoutQuery, queryString] = path.split('?');
+    const [pathWithoutQuery, queryString] = req.path.split('?');
     const pathArr = pathWithoutQuery.split('/').filter(segment => segment);
 
 
-    const matchedRoute = findMatchingRoute(method, pathArr, routes);
-
-    // const req = {
-    //     params: {},
-    //     query: {},
-    // };
+    const matchedRoute = findMatchingRoute(req.method, pathArr, routes);
 
     // Extract route parameters
     if (matchedRoute) {
@@ -18,7 +13,7 @@ const pathParser = (req, res, method, path, routes) => {
         for (let i = 0; i < routeSegments.length; i++) {
             if (routeSegments[i].startsWith(':')) {
                 const paramName = routeSegments[i].slice(1);
-                req.params[paramName] = pathArr[i];
+                req.setParam(paramName, pathArr[i]);
             }
         }
         console.log("match",routes[method][matchedRoute]);
@@ -30,7 +25,7 @@ const pathParser = (req, res, method, path, routes) => {
         const queryArr = queryString.split('&');
         queryArr.forEach(query => {
             const [key, value] = query.split('=');
-            req.query[key] = decodeURIComponent(value);
+            req.setQuery(key, decodeURIComponent(value));
         });
     }
     return req;

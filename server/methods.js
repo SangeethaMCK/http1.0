@@ -104,6 +104,28 @@ const methodHandler = (req, res) => {
       }
       break;
 
+    case methods.PATCH:
+      try {
+        // If body is JSON, parse it
+        const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        console.log("Updated Body:", updatedBody);
+
+        sendResponse(
+          res,
+          200,
+          headers["content-type"] || "application/json",
+          JSON.stringify({ message: "Updated successfully", data: updatedBody })
+        );
+      } catch (error) {
+        console.error("Error parsing body:", error);
+        sendResponse(
+          res,
+          400,
+          "application/json",
+          JSON.stringify({ error: "Invalid body content" })
+        );
+      }
+
     case methods.DELETE:
       sendResponse(
         res,

@@ -4,16 +4,17 @@ const bodyParser = (req, res, next) => {
 
     if (contentType === 'application/json' && req.body) {
         try {
-            req.body = JSON.parse(req.body);
+            req.setBody(JSON.parse(req.body));
         } catch (e) {
             console.error('Error parsing JSON:', e);
-            res.statusCode = 400;
-            res.headers.push({ 'Content-Type': 'application/json' });
-            res.body = JSON.stringify({ error: 'Invalid JSON' });
+            res.setStatusCode(400);
+            res.setHeader('Content-Type', 'application/json');
+            res.setBody(JSON.stringify({ error: 'Invalid JSON' }));
+            res.send();
             return;
         }
     } else if (contentType === 'text/plain' || contentType === 'text/html') {
-        req.body = req.body.toString();
+        req.setBody(req.body.toString());
     }
 
     next();
