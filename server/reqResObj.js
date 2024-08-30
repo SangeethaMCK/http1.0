@@ -1,5 +1,7 @@
 const statusMessages = require('./statusCode');
-const req= {
+
+const createReq = () => {
+    return {
     method:'',    
     version:'http/1.0',
     path:'',
@@ -31,9 +33,11 @@ const req= {
     setParams(params) {
         this.params = params;
     }
+}
 };
 
-const res = {
+const createRes = (connection) => {
+    return {
     statusCode: '',  
     headers: {},      
     body: '',         
@@ -65,6 +69,6 @@ const res = {
         connection.end();
         return;
     }
-}
+}}
 
-module.exports = { req, res };
+module.exports = { createReq, createRes };

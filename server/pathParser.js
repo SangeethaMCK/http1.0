@@ -13,11 +13,13 @@ const pathParser = (req, res,routes) => {
         for (let i = 0; i < routeSegments.length; i++) {
             if (routeSegments[i].startsWith(':')) {
                 const paramName = routeSegments[i].slice(1);
-                req.setParam(paramName, pathArr[i]);
+                req.setParams(paramName, pathArr[i]);
             }
         }
-        console.log("match",routes[method][matchedRoute]);
-        routes[method][matchedRoute](req, res);
+        console.log("match",routes[req.method][matchedRoute]);
+        console.log("req.body",req.body);
+        routes[req.method][matchedRoute](req, res);
+        return;
     }
 
     // Extract query parameters

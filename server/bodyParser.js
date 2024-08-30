@@ -4,7 +4,10 @@ const bodyParser = (req, res, next) => {
 
     if (contentType === 'application/json' && req.body) {
         try {
-            req.setBody(JSON.parse(req.body));
+            
+            req.setBody(JSON.parse(req.body.toString()))
+            // console.log("req.body1:",req.body);
+            // console.log("parsingg",JSON.parse(req.body));
         } catch (e) {
             console.error('Error parsing JSON:', e);
             res.setStatusCode(400);

@@ -4,13 +4,18 @@ const { applyMiddlewares } = require('./middlewareHandler');
 const { route, routes } = require('./routeHandler');
 const { use } = require('./middlewareHandler');
 const { methodHandler } = require('./methods');
-const { req, res } = require('./reqResObj');
+const { createReq, createRes } = require('./reqResObj');
 
 
 // Function to handle incoming connections
 function handleConnection(connection) {
     console.log('Client connected');
     console.log("routes", routes);
+
+    const req = createReq();
+    const res = createRes(connection);
+
+    
     connection.on('data', async (data) => {
         console.log("data",data);
         

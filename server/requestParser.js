@@ -26,7 +26,7 @@ function reqParser(req, res, data, routes) {
   req.setMethod(method);
   req.setPath(path);
   req.setHeaders(headers);
-  req.setbody(reqBody);
+  req.setBody(reqBody);
 
   req = pathParser(req, res, routes);
 

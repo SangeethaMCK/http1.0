@@ -16,6 +16,7 @@ const sendResponse = (res, statusCode, contentType, body) => {
   res.setHeader('Content-Length', Buffer.from(body).length);
   res.setBody(body);
   res.send();
+  return;
 };
 
 const methodHandler = (req, res) => {
@@ -56,19 +57,18 @@ const methodHandler = (req, res) => {
       break;
 
     case methods.POST:
+      console.log("req.body-post",req.body);
       try {
         // If body is JSON, parse it
-        const parsedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
-        console.log("Parsed Body:", parsedBody);
+        // const parsedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        // console.log("Parsed Body:", parsedBody);
+        
 
         sendResponse(
           res,
           201,
           headers["content-type"] || "application/json",
-          JSON.stringify({
-            message: "Created successfully",
-            data: parsedBody,
-          })
+          JSON.stringify({ message: "Created successfully", data: req.body })
         );
       } catch (error) {
         console.error("Error parsing body:", error);
@@ -84,14 +84,14 @@ const methodHandler = (req, res) => {
     case methods.PUT:
       try {
         // If body is JSON, parse it
-        const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
-        console.log("Updated Body:", updatedBody);
+        // const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        // console.log("Updated Body:", updatedBody);
 
         sendResponse(
           res,
           200,
           headers["content-type"] || "application/json",
-          JSON.stringify({ message: "Updated successfully", data: updatedBody })
+          JSON.stringify({ message: "Updated successfully", data: req.body })
         );
       } catch (error) {
         console.error("Error parsing body:", error);
@@ -107,14 +107,14 @@ const methodHandler = (req, res) => {
     case methods.PATCH:
       try {
         // If body is JSON, parse it
-        const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
-        console.log("Updated Body:", updatedBody);
+        // const updatedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;
+        // console.log("Updated Body:", updatedBody);
 
         sendResponse(
           res,
           200,
           headers["content-type"] || "application/json",
-          JSON.stringify({ message: "Updated successfully", data: updatedBody })
+          JSON.stringify({ message: "Updated successfully", data: req.body })
         );
       } catch (error) {
         console.error("Error parsing body:", error);
