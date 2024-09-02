@@ -7,13 +7,14 @@ const routes = {
 };
 
 function route(method, path, handler) {
+    // console.log('Route Handler:');
+    
     if (!routes[method]) {
         routes[method] = {};
     }
 
-    // Normalize the path (ensure it doesn't start with "/")
     const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
-    // Store the handler in the routes object
+    
     routes[method][normalizedPath] = handler;
     
 }

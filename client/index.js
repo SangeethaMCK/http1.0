@@ -4,7 +4,7 @@ const net = require('net');
 const client = net.createConnection({ port: 8080 }, () => {
     console.log('Connected to server');
     client.write("GET /users/123 HTTP/1.0\r\n"+
-        "Host: localhost:8080\r\n"+
+        "Host: localhost:3000\r\n"+
         "Content-Type: application/json\r\n"+
         "Connection: close\r\n\r\n"
     );

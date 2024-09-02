@@ -30,8 +30,8 @@ const createReq = () => {
         this.query = query;
     },
 
-    setParams(params) {
-        this.params = params;
+    setParams(params, value) {
+        this.params[params] = value;
     }
 }
 };

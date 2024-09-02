@@ -9,22 +9,19 @@ function use(middleware) {
 
 // Function to apply middlewares sequentially
 async function applyMiddlewares(req, res, next) {
-    let index = 0;
+    console.log('Middleware Handler:');
+
+    let index = -1;
 
     async function nextMiddleware() {
         index++;
         if (index < middlewares.length) {
             await middlewares[index](req, res, nextMiddleware);
         } else {
-            methodHandler(req, res); // Call methodHandler when done with all middlewares
+            await next(); // Proceed to the next stage (route handling) after all middlewares
         }
     }
 
-    if (middlewares.length > 0) {
-        await middlewares[index](req, res, nextMiddleware);
-    } else {
-        methodHandler(req, res); // Call methodHandler if no middlewares
-    }
+    await nextMiddleware();
 }
-
 module.exports = { use, applyMiddlewares };

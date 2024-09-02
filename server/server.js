@@ -10,23 +10,32 @@ const { createReq, createRes } = require('./reqResObj');
 // Function to handle incoming connections
 function handleConnection(connection) {
     console.log('Client connected');
-    console.log("routes", routes);
 
     const req = createReq();
     const res = createRes(connection);
 
-    
     connection.on('data', async (data) => {
-        console.log("data",data);
-        
-        reqParser(req, res, data, routes); 
+        reqParser(req, res, data, routes);
 
-        await applyMiddlewares(req, res, () => {
+        // Run middlewares before handling routes
+        await applyMiddlewares(req, res, async () => {
 
-            if (route[req.method] && route[req.method][req.path]) {
-                route[req.method][req.path](req, res);
+            const matchedRoute = findMatchingRoute(req.method, req.pathArr, routes);
+
+            // Extract route parameters
+            if (matchedRoute) {
+                const routeSegments = matchedRoute.split('/').filter(segment => segment);
+                for (let i = 0; i < routeSegments.length; i++) {
+                    if (routeSegments[i].startsWith(':')) {
+                        const paramName = routeSegments[i].slice(1);
+                        req.setParams(paramName, req.pathArr[i]);
+                    }
+                }
+
+                // Run the matched route handler
+                routes[req.method][matchedRoute](req, res);
             } else {
-                methodHandler(req, res);
+                methodHandler(req, res); // Handle unsupported methods or routes
             }
         });
     });
@@ -40,6 +49,36 @@ function handleConnection(connection) {
     });
 }
 
+
+function findMatchingRoute(method, pathArr, routes) {
+    const methodRoutes = routes[method];
+    if (!methodRoutes) {
+        console.log(`No routes found for method: ${method}`); //
+        return null;
+    }
+    for (let route in methodRoutes) {
+        const routeSegments = route.split('/').filter(segment => segment);
+        let match = true;
+
+        if (routeSegments.length !== pathArr.length) continue;
+
+        for (let i = 0; i < routeSegments.length; i++) {
+            if (routeSegments[i].startsWith(':')) {
+                continue;
+            }
+
+            if (routeSegments[i] !== pathArr[i]) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) return route;
+    }
+
+    return null;
+}
+
 // Create the server
 const server = () => {
     const serverInstance = net.createServer(handleConnection);
@@ -47,6 +86,13 @@ const server = () => {
     serverInstance.route = route;
     return serverInstance;
 };
+
+
+// path parser  
+// ?array of handlers
+// next
+// req 
+// cors
 
 // Export the server creation function
 module.exports = {

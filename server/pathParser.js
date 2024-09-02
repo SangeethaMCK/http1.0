@@ -1,26 +1,11 @@
+// const { bodyParser } = require("./bodyParser");
+
 const pathParser = (req, res,routes) => {
-    console.log('pathParser');
+console.log('Path Parser:');
 
     const [pathWithoutQuery, queryString] = req.path.split('?');
-    const pathArr = pathWithoutQuery.split('/').filter(segment => segment);
+     req.pathArr = pathWithoutQuery.split('/').filter(segment => segment);
 
-
-    const matchedRoute = findMatchingRoute(req.method, pathArr, routes);
-
-    // Extract route parameters
-    if (matchedRoute) {
-        const routeSegments = matchedRoute.split('/').filter(segment => segment);
-        for (let i = 0; i < routeSegments.length; i++) {
-            if (routeSegments[i].startsWith(':')) {
-                const paramName = routeSegments[i].slice(1);
-                req.setParams(paramName, pathArr[i]);
-            }
-        }
-        console.log("match",routes[req.method][matchedRoute]);
-        console.log("req.body",req.body);
-        routes[req.method][matchedRoute](req, res);
-        return;
-    }
 
     // Extract query parameters
     if (queryString) {
@@ -30,33 +15,9 @@ const pathParser = (req, res,routes) => {
             req.setQuery(key, decodeURIComponent(value));
         });
     }
-    return req;
 };
 
-function findMatchingRoute(method, pathArr, routes) {
-    const methodRoutes = routes[method];
-    if (!methodRoutes) {
-        console.log(`No routes found for method: ${method}`);
-        return null;
-    }
-    for (let route in methodRoutes) {
-        const routeSegments = route.split('/').filter(segment => segment);
-        let match = true;
 
-        if (routeSegments.length !== pathArr.length) continue;
-
-        for (let i = 0; i < routeSegments.length; i++) {
-            if (!routeSegments[i].startsWith(':') && routeSegments[i] !== pathArr[i]) {
-                match = false;
-                break;
-            }
-        }
-
-        if (match) return route;
-    }
-
-    return null;
-}
 
 
 module.exports = { pathParser };

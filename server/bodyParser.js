@@ -1,13 +1,15 @@
 const bodyParser = (req, res, next) => {
-    console.log('Body Parser');
+    console.log('Body Parser:');
     const contentType = req.headers['Content-Type'] || req.headers['content-type'];
 
-    if (contentType === 'application/json' && req.body) {
+    console.log('Content-Type:', contentType);
+
+    if (contentType === 'application/json' && req.body!='') {
         try {
             
             req.setBody(JSON.parse(req.body.toString()))
-            // console.log("req.body1:",req.body);
-            // console.log("parsingg",JSON.parse(req.body));
+            console.log('Parsed Body:', req.body);
+            
         } catch (e) {
             console.error('Error parsing JSON:', e);
             res.setStatusCode(400);

@@ -20,7 +20,8 @@ const sendResponse = (res, statusCode, contentType, body) => {
 };
 
 const methodHandler = (req, res) => {
-  console.log('methodHandler', req);
+  console.log('Method Handler:');
+  
   const { method, path: reqPath, headers, body } = req;
 
   switch (method) {
@@ -57,7 +58,6 @@ const methodHandler = (req, res) => {
       break;
 
     case methods.POST:
-      console.log("req.body-post",req.body);
       try {
         // If body is JSON, parse it
         // const parsedBody = headers["content-type"] === "application/json" ? JSON.parse(body) : body;

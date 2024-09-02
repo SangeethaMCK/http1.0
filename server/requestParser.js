@@ -1,12 +1,12 @@
+const { bodyParser } = require("./bodyParser");
 const { pathParser } = require("./pathParser");
 
 // need to add routes
 function reqParser(req, res, data, routes) {
-  console.log("reqParser", data);
+console.log('Request Parser:');
 
   const delimiters = Buffer.from("\r\n\r\n");
 
-  console.log("delimiters", delimiters);    
 
   const [reqHeaders, reqBody] = [
     data.slice(0, data.indexOf(delimiters)),
@@ -28,9 +28,9 @@ function reqParser(req, res, data, routes) {
   req.setHeaders(headers);
   req.setBody(reqBody);
 
-  req = pathParser(req, res, routes);
+pathParser(req, res, routes);
+ 
 
-  return req;
 }
 
 module.exports = { reqParser };
