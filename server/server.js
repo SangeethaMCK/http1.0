@@ -32,8 +32,16 @@ function handleConnection(connection) {
                     }
                 }
 
-                // Run the matched route handler
-                routes[req.method][matchedRoute](req, res);
+
+                async function runHandlers(index) {
+                    const handler =  routes[req.method][matchedRoute][index];
+    
+                    if (!handler) return; 
+    
+                    await handler(req, res, () => runHandlers(index + 1));
+                }
+                runHandlers(0);
+
             } else {
                 methodHandler(req, res); // Handle unsupported methods or routes
             }
@@ -86,13 +94,6 @@ const server = () => {
     serverInstance.route = route;
     return serverInstance;
 };
-
-
-// path parser  
-// ?array of handlers
-// next
-// req 
-// cors
 
 // Export the server creation function
 module.exports = {

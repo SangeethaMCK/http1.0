@@ -1,4 +1,5 @@
-const bodyParser = (req, res, next) => {
+const bodyParser = () =>{
+return(req, res, next) => {
     console.log('Body Parser:');
     const contentType = req.headers['Content-Type'] || req.headers['content-type'];
 
@@ -23,6 +24,7 @@ const bodyParser = (req, res, next) => {
     }
 
     next();
+};
 };
 
 module.exports = { bodyParser };

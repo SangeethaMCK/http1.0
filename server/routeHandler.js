@@ -6,8 +6,8 @@ const routes = {
     // Add other methods as needed
 };
 
-function route(method, path, handler) {
-    // console.log('Route Handler:');
+function route(method, path, ...handler) {
+    // console.log('Route Handler:',routes);
     
     if (!routes[method]) {
         routes[method] = {};
