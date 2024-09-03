@@ -1,5 +1,3 @@
-const { methodHandler } = require("./methods");
-
 const middlewares = [];
 
 // Function to add a middleware

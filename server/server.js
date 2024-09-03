@@ -99,3 +99,9 @@ const server = () => {
 module.exports = {
     server
 };
+
+// path parser  
+// ?array of handlers
+// next
+// req 
+// cors
