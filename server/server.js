@@ -15,6 +15,7 @@ function handleConnection(connection) {
     const res = createRes(connection);
 
     connection.on('data', async (data) => {
+        // console.log("data", data);
         reqParser(req, res, data, routes);
 
         // Run middlewares before handling routes

@@ -65,6 +65,7 @@ const createRes = (connection) => {
         if (this.body) {
             response += this.body;
         }
+        console.log("response", response);  
         connection.write(response);
         connection.end();
         return;

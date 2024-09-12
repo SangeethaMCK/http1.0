@@ -17,6 +17,8 @@ console.log('Request Parser:');
 
   const [method, path, version] = reqline.split(" ");
 
+  // console.log("paath", path);
+
   // Parse headers
   const headers = {};
   reqHeader.forEach((header) => {
